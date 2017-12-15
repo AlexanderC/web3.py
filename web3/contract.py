@@ -789,7 +789,6 @@ def call_contract_function(contract,
     else:
         return normalized_data
 
-
 def transact_with_contract_function(contract=None,
                                     function_name=None,
                                     transaction=None,
@@ -799,12 +798,22 @@ def transact_with_contract_function(contract=None,
     Helper function for interacting with a contract function by sending a
     transaction.
     """
+
+    return_tx = False
+
+    if '_return_tx_' in kwargs.keys():
+        del kwargs['_return_tx_']
+        return_tx = True
+
     transact_transaction = contract._prepare_transaction(
         fn_name=function_name,
         fn_args=args,
         fn_kwargs=kwargs,
         transaction=transaction,
     )
+
+    if return_tx:
+        return transact_transaction
 
     txn_hash = contract.web3.eth.sendTransaction(transact_transaction)
     return txn_hash
